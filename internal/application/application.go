@@ -26,6 +26,7 @@ func (a *App) Run() {
 	a.Day1_1()
 	a.Day1_2()
 	a.Day2_1()
+	a.Day2_2()
 }
 
 func (a *App) Day1_1() {
@@ -51,11 +52,23 @@ func (a *App) Day2_1() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	result, err := a.NavigationSystem.CalculatePosition(position)
+	result, err := a.NavigationSystem.CalculatePositionV1(position)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Day 2.1 location is %#v. Answer is %d", result, result.Horizontal*result.Depth)
+	fmt.Printf("Day 2.1 location is %#v. Answer is %d\n", result, result.Horizontal*result.Depth)
+}
+
+func (a *App) Day2_2() {
+	position, err := getAOCDirectionInput("testData/day2/day2.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	result, err := a.NavigationSystem.CalculatePositionV2(position)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Day 2.2 location is %#v. Answer is %d\n", result, result.Horizontal*result.Depth)
 }
 
 func getAOCSonarInput(fileName string) ([]int, error) {
