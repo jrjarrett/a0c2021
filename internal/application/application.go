@@ -4,17 +4,20 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/jrjarrett/aoc2021/internal/day1"
-	"github.com/jrjarrett/aoc2021/internal/day2"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jrjarrett/aoc2021/internal/day1"
+	"github.com/jrjarrett/aoc2021/internal/day2"
+	"github.com/jrjarrett/aoc2021/internal/day3"
 )
 
 type App struct {
 	Sonar            day1.Sonar
 	NavigationSystem day2.NavigationSystem
+	Scanner          day3.Scanner
 }
 
 func New() *App {
@@ -23,14 +26,18 @@ func New() *App {
 }
 
 func (a *App) Run() {
-	a.Day1_1()
-	a.Day1_2()
-	a.Day2_1()
-	a.Day2_2()
+	//a.Day1_1()
+	//a.Day1_2()
+	//a.Day2_1()
+	//a.Day2_2()
+	a.Day3_1()
+	a.Day3_2()
+
 }
 
 func (a *App) Day1_1() {
-	sonarSweep, err := getAOCSonarInput("testData/day1/challenge1.txt")
+
+	sonarSweep, err := getAOCSonarInput("/Users/jarrett/src/aoc2021/testData/day1/challenge1.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +46,7 @@ func (a *App) Day1_1() {
 }
 
 func (a *App) Day1_2() {
-	sonarSweep, err := getAOCSonarInput("testData/day1/challenge1.txt")
+	sonarSweep, err := getAOCSonarInput("/Users/jarrett/src/aoc2021/testData/day1/challenge1.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +55,7 @@ func (a *App) Day1_2() {
 }
 
 func (a *App) Day2_1() {
-	position, err := getAOCDirectionInput("testData/day2/day2.txt")
+	position, err := getAOCDirectionInput("/Users/jarrett/src/aoc2021/testData/day2/day2.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,7 +67,7 @@ func (a *App) Day2_1() {
 }
 
 func (a *App) Day2_2() {
-	position, err := getAOCDirectionInput("testData/day2/day2.txt")
+	position, err := getAOCDirectionInput("/Users/jarrett/src/aoc2021/testData/day2/day2.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,6 +76,29 @@ func (a *App) Day2_2() {
 		log.Fatal(err)
 	}
 	fmt.Printf("Day 2.2 location is %#v. Answer is %d\n", result, result.Horizontal*result.Depth)
+}
+
+func (a *App) Day3_1() {
+	readings, err := a.Scanner.GetReactorInput("/Users/jarrett/src/aoc2021/testData/day3/day3.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	transform := a.Scanner.RotateArrayCW(readings)
+	gamma, epsilon := a.Scanner.CalculateGammaEpsilonValue(transform)
+	fmt.Printf("Day 2.1 Gamma is %d, epsilon is %d, energy use is %d\n", gamma, epsilon, gamma*epsilon)
+}
+
+func (a *App) Day3_2() {
+	readings, err := a.Scanner.GetReactorInput("/Users/jarrett/src/aoc2021/testData/day3/day3.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	o2Readings := a.Scanner.CalculateO2CO2Values(readings, 0, day3.O2)
+	co2Readings := a.Scanner.CalculateO2CO2Values(readings, 0, day3.CO2)
+	o2 := a.Scanner.ConvertToDecimal(o2Readings)
+	co2 := a.Scanner.ConvertToDecimal(co2Readings)
+	fmt.Printf("Day 3.2 O2 level is %d CO2 level is %d Life Support Reading is %d", o2, co2, o2*co2)
+
 }
 
 func getAOCSonarInput(fileName string) ([]int, error) {
