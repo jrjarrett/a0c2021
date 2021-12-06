@@ -30,7 +30,8 @@ func (a *App) Run() {
 	//a.Day1_2()
 	//a.Day2_1()
 	//a.Day2_2()
-	a.Day3()
+	a.Day3_1()
+	a.Day3_2()
 
 }
 
@@ -77,7 +78,7 @@ func (a *App) Day2_2() {
 	fmt.Printf("Day 2.2 location is %#v. Answer is %d\n", result, result.Horizontal*result.Depth)
 }
 
-func (a *App) Day3() {
+func (a *App) Day3_1() {
 	readings, err := a.Scanner.GetReactorInput("/Users/jarrett/src/aoc2021/testData/day3/day3.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -85,6 +86,19 @@ func (a *App) Day3() {
 	transform := a.Scanner.RotateArrayCW(readings)
 	gamma, epsilon := a.Scanner.CalculateGammaEpsilonValue(transform)
 	fmt.Printf("Day 2.1 Gamma is %d, epsilon is %d, energy use is %d\n", gamma, epsilon, gamma*epsilon)
+}
+
+func (a *App) Day3_2() {
+	readings, err := a.Scanner.GetReactorInput("/Users/jarrett/src/aoc2021/testData/day3/day3.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	o2Readings := a.Scanner.CalculateO2CO2Values(readings, 0, day3.O2)
+	co2Readings := a.Scanner.CalculateO2CO2Values(readings, 0, day3.CO2)
+	o2 := a.Scanner.ConvertToDecimal(o2Readings)
+	co2 := a.Scanner.ConvertToDecimal(co2Readings)
+	fmt.Printf("Day 3.2 O2 level is %d CO2 level is %d Life Support Reading is %d", o2, co2, o2*co2)
+
 }
 
 func getAOCSonarInput(fileName string) ([]int, error) {
