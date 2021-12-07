@@ -116,7 +116,7 @@ func ApplyDrawsToBoards(b Bingo) (*Board, int) {
 				b.Boards[i].marked[draw] = bn
 				if b.Boards[i].rowBingo[b.Boards[i].marked[draw].row] == b.Boards[i].rows || b.Boards[i].columnBingo[b.Boards[i].marked[draw].col] == b.Boards[i].cols {
 					// BINGO!
-					fmt.Println("BINGO! on draw %d\n", draw)
+					fmt.Printf("BINGO! on draw %d\n", draw)
 					return &b.Boards[i], draw
 				}
 			}
@@ -126,7 +126,31 @@ func ApplyDrawsToBoards(b Bingo) (*Board, int) {
 	fmt.Println("Something wrong - no winners?")
 	return nil, -1
 }
+func ApplyDrawsToBoardsV2(b Bingo) (*Board, int) {
+	var lastWinningBoard Board
+	var lastDraw int
+	for i, draw := range b.Draws {
+		fmt.Printf("Draw # %d - draws %d\n", i+1, draw)
+		for i := range b.Boards {
+			if _, ok := b.Boards[i].marked[draw]; ok {
+				b.Boards[i].rowBingo[b.Boards[i].marked[draw].row]++
+				b.Boards[i].columnBingo[b.Boards[i].marked[draw].col]++
+				bn := b.Boards[i].marked[draw]
+				bn.marked = true
+				b.Boards[i].marked[draw] = bn
+				if b.Boards[i].rowBingo[b.Boards[i].marked[draw].row] == b.Boards[i].rows || b.Boards[i].columnBingo[b.Boards[i].marked[draw].col] == b.Boards[i].cols {
+					// BINGO!
+					fmt.Printf("BINGO! on draw %d\n", draw)
+					lastWinningBoard = b.Boards[i]
+					lastDraw = draw
+					b.Boards = append(b.Boards[:i], b.Boards[i+1:]...)
 
+				}
+			}
+		}
+	}
+	return &lastWinningBoard, lastDraw
+}
 func CalculateUnmarkedSquares(b Board) int {
 	var boardSum int
 	for key, element := range b.marked {

@@ -44,4 +44,19 @@ func Test_DayFourPart1(t *testing.T) {
 		assert.Equal(t, 4512, (boardSum * winningDraw))
 
 	})
+	t.Run("test AOC example part 2", func(t *testing.T) {
+		b := Bingo{}
+		b = b.BuildGameFromInput("/Users/jarrett/src/aoc2021/testData/day4/day4test.txt")
+		winningBoard, winningDraw := ApplyDrawsToBoardsV2(b)
+		assert.Equal(t, winningDraw, 13)
+		assert.Equal(t, BingoNumber{row: 0, col: 2, marked: true}, winningBoard.marked[0])
+		assert.Equal(t, BingoNumber{row: 1, col: 2, marked: true}, winningBoard.marked[13])
+		assert.Equal(t, BingoNumber{row: 2, col: 2, marked: true}, winningBoard.marked[7])
+		assert.Equal(t, BingoNumber{row: 3, col: 2, marked: true}, winningBoard.marked[10])
+		assert.Equal(t, BingoNumber{row: 4, col: 2, marked: true}, winningBoard.marked[16])
+		boardSum := CalculateUnmarkedSquares(*winningBoard)
+		fmt.Printf("sum is %d\n", boardSum)
+		assert.Equal(t, 1924, (boardSum * winningDraw))
+
+	})
 }
