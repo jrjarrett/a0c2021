@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/jrjarrett/aoc2021/internal/day4"
 	"log"
 	"os"
 	"strconv"
@@ -18,6 +19,7 @@ type App struct {
 	Sonar            day1.Sonar
 	NavigationSystem day2.NavigationSystem
 	Scanner          day3.Scanner
+	Bingo            day4.Bingo
 }
 
 func New() *App {
@@ -30,8 +32,9 @@ func (a *App) Run() {
 	//a.Day1_2()
 	//a.Day2_1()
 	//a.Day2_2()
-	a.Day3_1()
-	a.Day3_2()
+	//a.Day3_1()
+	//a.Day3_2()
+	a.Day4_1()
 
 }
 
@@ -98,6 +101,16 @@ func (a *App) Day3_2() {
 	o2 := a.Scanner.ConvertToDecimal(o2Readings)
 	co2 := a.Scanner.ConvertToDecimal(co2Readings)
 	fmt.Printf("Day 3.2 O2 level is %d CO2 level is %d Life Support Reading is %d", o2, co2, o2*co2)
+
+}
+
+func (a *App) Day4_1() {
+	bingo := a.Bingo.BuildGameFromInput("/Users/jarrett/src/aoc2021/testData/day4/day4.txt")
+	winningBoard, winningDraw := day4.ApplyDrawsToBoards(bingo)
+
+	boardSum := day4.CalculateUnmarkedSquares(*winningBoard)
+	fmt.Printf("sum is %d\n", boardSum)
+	fmt.Printf("Answer is is %d\n", boardSum*winningDraw)
 
 }
 
