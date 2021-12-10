@@ -34,6 +34,7 @@ type BingoNumber struct {
 // if columnBingo == cols, BINGO!
 
 type Board struct {
+	ID          int
 	rows        int
 	cols        int
 	marked      map[int]BingoNumber
@@ -64,22 +65,25 @@ func (b *Bingo) BuildGameFromInput(fileName string) Bingo {
 
 	boards := make([]Board, 0)
 	linesForBoard := make([]string, 0)
+	boardId := 1
 	for scanner.Scan() {
 		if len(linesForBoard) == 5 {
-			boards = append(boards, NewBoard(linesForBoard))
+			boards = append(boards, NewBoard(linesForBoard, boardId))
+			boardId++
 			linesForBoard = make([]string, 0)
 			scanner.Text()
 		} else {
 			linesForBoard = append(linesForBoard, scanner.Text())
 		}
 	}
-	boards = append(boards, NewBoard(linesForBoard))
+	boards = append(boards, NewBoard(linesForBoard, boardId))
 
 	return Bingo{Draws: draws, Boards: boards}
 }
 
-func NewBoard(linesInBoard []string) Board {
+func NewBoard(linesInBoard []string, boardId int) Board {
 	board := Board{
+		ID:          boardId,
 		rows:        5,
 		cols:        5,
 		marked:      make(map[int]BingoNumber),
@@ -116,7 +120,7 @@ func ApplyDrawsToBoards(b Bingo) (*Board, int) {
 				b.Boards[i].marked[draw] = bn
 				if b.Boards[i].rowBingo[b.Boards[i].marked[draw].row] == b.Boards[i].rows || b.Boards[i].columnBingo[b.Boards[i].marked[draw].col] == b.Boards[i].cols {
 					// BINGO!
-					fmt.Printf("BINGO! on draw %d\n", draw)
+					fmt.Printf("BINGO! on board %d for draw %d\n", b.Boards[i].ID, draw)
 					return &b.Boards[i], draw
 				}
 			}
@@ -129,9 +133,11 @@ func ApplyDrawsToBoards(b Bingo) (*Board, int) {
 func ApplyDrawsToBoardsV2(b Bingo) (*Board, int) {
 	var lastWinningBoard Board
 	var lastDraw int
-	for i, draw := range b.Draws {
-		fmt.Printf("Draw # %d - draws %d\n", i+1, draw)
-		for i := range b.Boards {
+	for drawNumber, draw := range b.Draws {
+		bingoedBoards := make([]int, 0)
+		bingoedBoardIDs := make([]int, 0)
+		fmt.Printf("Draw # %d - draws %d\n", drawNumber+1, draw)
+		for i := 0; i < len(b.Boards); i++ {
 			if _, ok := b.Boards[i].marked[draw]; ok {
 				b.Boards[i].rowBingo[b.Boards[i].marked[draw].row]++
 				b.Boards[i].columnBingo[b.Boards[i].marked[draw].col]++
@@ -140,13 +146,27 @@ func ApplyDrawsToBoardsV2(b Bingo) (*Board, int) {
 				b.Boards[i].marked[draw] = bn
 				if b.Boards[i].rowBingo[b.Boards[i].marked[draw].row] == b.Boards[i].rows || b.Boards[i].columnBingo[b.Boards[i].marked[draw].col] == b.Boards[i].cols {
 					// BINGO!
-					fmt.Printf("BINGO! on draw %d\n", draw)
+					fmt.Printf("BINGO! on board %d for draw %d\n", b.Boards[i].ID, draw)
 					lastWinningBoard = b.Boards[i]
 					lastDraw = draw
-					b.Boards = append(b.Boards[:i], b.Boards[i+1:]...)
-
+					bingoedBoards = append(bingoedBoards, i)
+					bingoedBoardIDs = append(bingoedBoardIDs, b.Boards[i].ID)
 				}
 			}
+		}
+		// If we had bingos, remove that board.
+		if len(bingoedBoards) > 0 {
+			for bbid, bingoedBoard := range bingoedBoards {
+				fmt.Printf("Removing board number %d board ID is %d\n", bingoedBoard, bingoedBoardIDs[bbid])
+				if bingoedBoard < len(b.Boards) {
+					b.Boards = append(b.Boards[:bingoedBoard], b.Boards[bingoedBoard+1:]...)
+				} else {
+					b.Boards = append(b.Boards[:bingoedBoard])
+				}
+			}
+
+			// Reset for next draw
+			bingoedBoards = make([]int, 0)
 		}
 	}
 	return &lastWinningBoard, lastDraw

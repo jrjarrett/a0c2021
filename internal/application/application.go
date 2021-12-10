@@ -28,13 +28,14 @@ func New() *App {
 }
 
 func (a *App) Run() {
-	//a.Day1_1()
-	//a.Day1_2()
-	//a.Day2_1()
-	//a.Day2_2()
-	//a.Day3_1()
-	//a.Day3_2()
-	a.Day4_1()
+	// a.Day1_1()
+	// a.Day1_2()
+	// a.Day2_1()
+	// a.Day2_2()
+	// a.Day3_1()
+	// a.Day3_2()
+	// a.Day4_1()
+	a.Day4_2()
 
 }
 
@@ -105,10 +106,21 @@ func (a *App) Day3_2() {
 }
 
 func (a *App) Day4_1() {
-	bingo := a.Bingo.BuildGameFromInput("/Users/jarrett/src/aoc2021/testData/day4/day4.txt")
+	bingo := a.Bingo.BuildGameFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day4/day4.txt")
 	winningBoard, winningDraw := day4.ApplyDrawsToBoards(bingo)
 
 	boardSum := day4.CalculateUnmarkedSquares(*winningBoard)
+	fmt.Printf("sum is %d\n", boardSum)
+	fmt.Printf("Answer is is %d\n", boardSum*winningDraw)
+
+}
+
+func (a *App) Day4_2() {
+	bingo := a.Bingo.BuildGameFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day4/day4.txt")
+	winningBoard, winningDraw := day4.ApplyDrawsToBoardsV2(bingo)
+
+	boardSum := day4.CalculateUnmarkedSquares(*winningBoard)
+	fmt.Printf("board id is %d\n", winningBoard.ID)
 	fmt.Printf("sum is %d\n", boardSum)
 	fmt.Printf("Answer is is %d\n", boardSum*winningDraw)
 

@@ -46,7 +46,7 @@ func Test_DayFourPart1(t *testing.T) {
 	})
 	t.Run("test AOC example part 2", func(t *testing.T) {
 		b := Bingo{}
-		b = b.BuildGameFromInput("/Users/jarrett/src/aoc2021/testData/day4/day4test.txt")
+		b = b.BuildGameFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day4/day4test.txt")
 		winningBoard, winningDraw := ApplyDrawsToBoardsV2(b)
 		assert.Equal(t, winningDraw, 13)
 		assert.Equal(t, BingoNumber{row: 0, col: 2, marked: true}, winningBoard.marked[0])
@@ -55,7 +55,7 @@ func Test_DayFourPart1(t *testing.T) {
 		assert.Equal(t, BingoNumber{row: 3, col: 2, marked: true}, winningBoard.marked[10])
 		assert.Equal(t, BingoNumber{row: 4, col: 2, marked: true}, winningBoard.marked[16])
 		boardSum := CalculateUnmarkedSquares(*winningBoard)
-		fmt.Printf("sum is %d\n", boardSum)
+		fmt.Printf("board ID is %d, sum is %d, score is %d\n", winningBoard.ID, boardSum, boardSum*winningDraw)
 		assert.Equal(t, 1924, (boardSum * winningDraw))
 
 	})
