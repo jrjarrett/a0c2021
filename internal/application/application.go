@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jrjarrett/aoc2021/internal/day4"
+	"github.com/jrjarrett/aoc2021/internal/day5"
 	"log"
 	"os"
 	"strconv"
@@ -20,6 +21,7 @@ type App struct {
 	NavigationSystem day2.NavigationSystem
 	Scanner          day3.Scanner
 	Bingo            day4.Bingo
+	Vents            day5.Vents
 }
 
 func New() *App {
@@ -35,7 +37,8 @@ func (a *App) Run() {
 	// a.Day3_1()
 	// a.Day3_2()
 	// a.Day4_1()
-	a.Day4_2()
+	// a.Day4_2()
+	a.Day5_1()
 
 }
 
@@ -124,6 +127,16 @@ func (a *App) Day4_2() {
 	fmt.Printf("sum is %d\n", boardSum)
 	fmt.Printf("Answer is is %d\n", boardSum*winningDraw)
 
+}
+
+func (a *App) Day5_1() {
+	ventLines, err := a.Vents.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5.txt", true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	hotSpots := a.Vents.FindHotSpots(ventLines)
+	result := a.Vents.CalculateDayOneAnswer(hotSpots)
+	fmt.Printf("Day 5 part 1 answer is %d", result)
 }
 
 func getAOCSonarInput(fileName string) ([]int, error) {
