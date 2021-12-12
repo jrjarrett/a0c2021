@@ -39,6 +39,7 @@ func (a *App) Run() {
 	// a.Day4_1()
 	// a.Day4_2()
 	a.Day5_1()
+	a.Day5_2()
 
 }
 
@@ -134,9 +135,19 @@ func (a *App) Day5_1() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	hotSpots := a.Vents.FindHotSpots(ventLines)
-	result := a.Vents.CalculateDayOneAnswer(hotSpots)
-	fmt.Printf("Day 5 part 1 answer is %d", result)
+	hotSpots := a.Vents.FindHotSpotsV2(ventLines)
+	result := a.Vents.CalculateAnswer(hotSpots)
+	fmt.Printf("Day 5 part 1 answer is %d\n", result)
+}
+
+func (a *App) Day5_2() {
+	ventLines, err := a.Vents.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5.txt", false)
+	if err != nil {
+		log.Fatal(err)
+	}
+	hotSpots := a.Vents.FindHotSpotsV2(ventLines)
+	result := a.Vents.CalculateAnswer(hotSpots)
+	fmt.Printf("Day 5 part 2 answer is %d\n", result)
 }
 
 func getAOCSonarInput(fileName string) ([]int, error) {

@@ -2,8 +2,8 @@ package day5
 
 import (
 	"bufio"
-	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -55,21 +55,21 @@ func (v *Vents) FindHotSpots(ventLines []VentLine) map[Point]int {
 	for _, ventLine := range ventLines {
 		var start, finish int
 		switch {
-		case ventLine.From.X == ventLine.To.X:
+		case ventLine.From.X >= ventLine.To.X:
 			// fmt.Printf("The X values match for %v\n", ventLine)
-			if ventLine.From.Y > ventLine.To.Y {
-				start = ventLine.To.Y
-				finish = ventLine.From.Y
-			} else {
-				start = ventLine.From.Y
-				finish = ventLine.To.Y
-			}
-			for i :=start; i <= finish; i++ {
-				p, exists :=hotSpots[Point{X:ventLine.From.X, Y:i}]
-				if (exists) {
-					hotSpots[Point{X:ventLine.From.X, Y:i}] = p +1
+			// if ventLine.From.Y > ventLine.To.Y {
+			// 	start = ventLine.To.Y
+			// 	finish = ventLine.From.Y
+			// } else {
+			// 	start = ventLine.From.Y
+			// 	finish = ventLine.To.Y
+			// }
+			for i := ventLine.From.X; i <= ventLine.From.X+(ventLine.To.X-ventLine.From.X); i++ {
+				p, exists := hotSpots[Point{X: ventLine.From.X, Y: i}]
+				if exists {
+					hotSpots[Point{X: ventLine.From.X, Y: i}] = p + 1
 				} else {
-					hotSpots[Point{X:ventLine.From.X, Y:i}] = 1
+					hotSpots[Point{X: ventLine.From.X, Y: i}] = 1
 				}
 			}
 			break
@@ -82,23 +82,94 @@ func (v *Vents) FindHotSpots(ventLines []VentLine) map[Point]int {
 				start = ventLine.From.X
 				finish = ventLine.To.X
 			}
-			for i :=start; i <= finish; i++ {
-				p, exists :=hotSpots[Point{X:i, Y:ventLine.From.Y}]
-				if (exists) {
-					hotSpots[Point{X:i, Y:ventLine.From.Y}] = p +1
+			for i := start; i <= finish; i++ {
+				p, exists := hotSpots[Point{X: i, Y: ventLine.From.Y}]
+				if exists {
+					hotSpots[Point{X: i, Y: ventLine.From.Y}] = p + 1
 				} else {
-					hotSpots[Point{X:i, Y:ventLine.From.Y}] = 1
+					hotSpots[Point{X: i, Y: ventLine.From.Y}] = 1
 				}
 			}
 			break
+		case ventLine.From.X <= ventLine.To.Y:
+			// fmt.Printf("X <= Y for %v\n", ventLine)
+			// fmt.Printf("Loop is %d times\n", ventLine.To.X-ventLine.From.X)
+			for i := 0; i <= ventLine.To.X-ventLine.From.X; i++ {
+				p, exists := hotSpots[Point{X: ventLine.From.X + i, Y: ventLine.From.Y + i}]
+				if exists {
+					hotSpots[Point{X: ventLine.From.X + i, Y: ventLine.From.Y + i}] = p + 1
+				} else {
+					hotSpots[Point{X: ventLine.From.X + i, Y: ventLine.From.Y + i}] = 1
+				}
+			}
+			break
+		case ventLine.From.X >= ventLine.To.Y:
+			// fmt.Printf("X >= Y for %v\n", ventLine)
+			// fmt.Printf("Loop is %d times\n", ventLine.From.X-ventLine.To.X)
+			for i := ventLine.From.X - ventLine.To.X; i >= 0; i-- {
+				p, exists := hotSpots[Point{X: ventLine.From.X - i, Y: ventLine.From.Y - i}]
+				if exists {
+					hotSpots[Point{X: ventLine.From.X - i, Y: ventLine.From.Y - i}] = p + 1
+				} else {
+					hotSpots[Point{X: ventLine.From.X - i, Y: ventLine.From.Y - i}] = 1
+				}
+			}
+			break
+		case ventLine.From.X == ventLine.To.Y:
+			// fmt.Printf("X == Y for %v\n", ventLine)
+
 		default:
-			fmt.Printf("This line is not processed %v\n", ventLine)
+			// fmt.Printf("This line is not processed %v\n", ventLine)
 		}
 	}
 	return hotSpots
 }
 
-func (v * Vents) CalculateDayOneAnswer(hotSpots map[Point]int) int {
+func (v *Vents) FindHotSpotsV2(ventLines []VentLine) map[Point]int {
+	hotSpots := make(map[Point]int)
+	for _, ventLine := range ventLines {
+		horizontalDelta := ventLine.To.X - ventLine.From.X
+		verticalDelta := ventLine.To.Y - ventLine.From.Y
+
+		x0 := ventLine.From.X
+		y0 := ventLine.From.Y
+		var x, y int
+		if horizontalDelta != 0 {
+			x = int(math.Abs(float64(horizontalDelta))) / horizontalDelta
+		}
+		if verticalDelta != 0 {
+			y = int(math.Abs(float64(verticalDelta))) / verticalDelta
+		}
+
+		for !isCountingUp(x, y, x0, y0, ventLine.To) {
+			markSpot(hotSpots, x0, y0)
+			x0 = x0 + x
+			y0 = y0 + y
+		}
+		markSpot(hotSpots, ventLine.To.X, ventLine.To.Y)
+	}
+	return hotSpots
+}
+
+func isCountingUp(x, y, x0, y0 int, endPoint Point) bool {
+	if x == 1 || y == 1 {
+		return x0 >= endPoint.X && y0 >= endPoint.Y
+	}
+	return x0 <= endPoint.X && y0 <= endPoint.Y
+}
+
+func markSpot(hotSpots map[Point]int, x, y int) {
+	hotSpot := Point{X: x, Y: y}
+	// fmt.Printf("Point is %v\n", hotSpot)
+	p, exists := hotSpots[hotSpot]
+	if exists {
+		hotSpots[hotSpot] = p + 1
+	} else {
+		hotSpots[hotSpot] = 1
+	}
+}
+
+func (v *Vents) CalculateAnswer(hotSpots map[Point]int) int {
 	value := 0
 	for _, spot := range hotSpots {
 		if spot > 1 {

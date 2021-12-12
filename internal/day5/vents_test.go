@@ -61,9 +61,9 @@ func TestVentLine(t *testing.T) {
 	})
 	t.Run("Test Horizontal Line Intersect", func(t *testing.T) {
 		v := Vents{}
-		ventLines := make([]VentLine,0)
-		testReadings :=  []string{"0,9 -> 5,9", "0,9 -> 2,9"}
-		for _,s := range testReadings {
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"0,9 -> 5,9", "0,9 -> 2,9"}
+		for _, s := range testReadings {
 			ventLine, err := createVentLine(s)
 			assert.Nil(t, err)
 			ventLines = append(ventLines, *ventLine)
@@ -71,7 +71,7 @@ func TestVentLine(t *testing.T) {
 		fmt.Printf("ventLines is %v\n", ventLines)
 		hotSpots := v.FindHotSpots(ventLines)
 		fmt.Println(hotSpots)
-		result := v.CalculateDayOneAnswer(hotSpots)
+		result := v.CalculateAnswer(hotSpots)
 		assert.Equal(t, 3, result)
 	})
 	t.Run("Test Vertical Line", func(t *testing.T) {
@@ -93,9 +93,9 @@ func TestVentLine(t *testing.T) {
 	t.Run("Test Vertical Line intersect", func(t *testing.T) {
 
 		v := Vents{}
-		ventLines := make([]VentLine,0)
-		testReadings :=  []string{"2,2 -> 2,1", "2,1 -> 7,1"}
-		for _,s := range testReadings {
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"2,2 -> 2,1", "2,1 -> 7,1"}
+		for _, s := range testReadings {
 			ventLine, err := createVentLine(s)
 			assert.Nil(t, err)
 			ventLines = append(ventLines, *ventLine)
@@ -103,39 +103,113 @@ func TestVentLine(t *testing.T) {
 		fmt.Printf("ventLines is %v\n", ventLines)
 		hotSpots := v.FindHotSpots(ventLines)
 		fmt.Println(hotSpots)
-		result := v.CalculateDayOneAnswer(hotSpots)
-		assert.Equal(t, 1, result)	})
+		result := v.CalculateAnswer(hotSpots)
+		assert.Equal(t, 1, result)
+	})
 
 	t.Run("Day One", func(t *testing.T) {
 
 		v := Vents{}
-		ventLines ,err := v.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5test.txt", true)
+		ventLines, err := v.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5test.txt", true)
 		assert.Nil(t, err)
 		hotSpots := v.FindHotSpots(ventLines)
 		fmt.Println(hotSpots)
-		result := v.CalculateDayOneAnswer(hotSpots)
-		assert.Equal(t, 5, result)	})
+		result := v.CalculateAnswer(hotSpots)
+		assert.Equal(t, 5, result)
+	})
 }
 
 func TestDayTwoDiagnonals (t *testing.T) {
 	t.Run("Diagonals are created", func(t *testing.T) {
 		expected := VentLine{
-			From: Point{X: 1, Y:1},
-			To:   Point{X:3, Y:3},
+			From: Point{X: 6, Y: 4},
+			To:   Point{X: 2, Y: 0},
 		}
-		s := "1,1 -> 3,3"
-		result ,err := createVentLine(s)
+		s := "6,4 -> 2,0"
+		result, err := createVentLine(s)
 		assert.Nil(t, err)
 		assert.Equal(t, &expected, result)
 	})
 
-	t.Run("Diagonal line intersects", func(t *testing.T){
+	t.Run("Test Vertical Line With New Algorithm", func(t *testing.T) {
+		expected := map[Point]int{Point{X: 2, Y: 2}: 1, Point{X: 2, Y: 1}: 1}
+
+		v := Vents{}
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"2,2 -> 2,1"}
+		for _, s := range testReadings {
+			ventLine, err := createVentLine(s)
+			assert.Nil(t, err)
+			ventLines = append(ventLines, *ventLine)
+		}
+		fmt.Printf("ventLines is %v\n", ventLines)
+		hotSpots := v.FindHotSpotsV2(ventLines)
+		fmt.Println(hotSpots)
+		assert.Equal(t, expected, hotSpots)
+	})
+
+	t.Run("Diagonal mark hot spots", func(t *testing.T) {
+		expected := map[Point]int{Point{X: 1, Y: 1}: 1, Point{X: 2, Y: 2}: 1, Point{X: 3, Y: 3}: 1}
+		v := Vents{}
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"1,1 -> 3,3"}
+		for _, s := range testReadings {
+			ventLine, err := createVentLine(s)
+			assert.Nil(t, err)
+			ventLines = append(ventLines, *ventLine)
+		}
+		hotSpots := v.FindHotSpotsV2(ventLines)
+		fmt.Printf("hotSpots are %v\n", hotSpots)
+		assert.Equal(t, expected, hotSpots)
+	})
+	t.Run("Diagonal from test data mark hot spots", func(t *testing.T) {
+		expected := map[Point]int{Point{X: 6, Y: 4}: 1, Point{X: 5, Y: 3}: 1, Point{X: 4, Y: 2}: 1, Point{X: 3, Y: 1}: 1, Point{X: 2, Y: 0}: 1}
+		v := Vents{}
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"6,4 -> 2,0"}
+		for _, s := range testReadings {
+			ventLine, err := createVentLine(s)
+			assert.Nil(t, err)
+			ventLines = append(ventLines, *ventLine)
+		}
+		hotSpots := v.FindHotSpotsV2(ventLines)
+		fmt.Printf("hotSpots are %v\n", hotSpots)
+		assert.Equal(t, expected, hotSpots)
+	})
+
+	t.Run("Diagonal from corner to corner", func(t *testing.T) {
+		expected := map[Point]int{Point{X: 8, Y: 0}: 1, Point{X: 7, Y: 1}: 1, Point{X: 6, Y: 2}: 1, Point{X: 5, Y: 3}: 1, Point{X: 4, Y: 4}: 1, Point{X: 3, Y: 5}: 1, Point{X: 2, Y: 6}: 1, Point{X: 1, Y: 7}: 1, Point{X: 0, Y: 8}: 1}
+		v := Vents{}
+		ventLines := make([]VentLine, 0)
+		testReadings := []string{"8,0 -> 0,8"}
+		for _, s := range testReadings {
+			ventLine, err := createVentLine(s)
+			assert.Nil(t, err)
+			ventLines = append(ventLines, *ventLine)
+		}
+		hotSpots := v.FindHotSpotsV2(ventLines)
+		fmt.Printf("hotSpots are %v\n", hotSpots)
+		assert.Equal(t, expected, hotSpots)
+	})
+
+	t.Run("Day One with new algo", func(t *testing.T) {
+
+		v := Vents{}
+		ventLines, err := v.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5test.txt", true)
+		assert.Nil(t, err)
+		hotSpots := v.FindHotSpotsV2(ventLines)
+		fmt.Println(hotSpots)
+		result := v.CalculateAnswer(hotSpots)
+		assert.Equal(t, 5, result)
+	})
+	t.Run("Day Two", func(t *testing.T) {
+
 		v := Vents{}
 		ventLines, err := v.CreateVentLinesFromInput("/Users/jarrett/src/dev/golang/aoc2021/testData/day5/day5test.txt", false)
 		assert.Nil(t, err)
-		hotSpots := v.FindHotSpots(ventLines)
+		hotSpots := v.FindHotSpotsV2(ventLines)
 		fmt.Println(hotSpots)
-		// result := v.CalculateDayOneAnswer(hotSpots)
-		// assert.Equal(t, 3, result)
+		result := v.CalculateAnswer(hotSpots)
+		assert.Equal(t, 12, result)
 	})
 }
