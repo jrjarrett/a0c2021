@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jrjarrett/aoc2021/internal/day4"
 	"github.com/jrjarrett/aoc2021/internal/day5"
+	"github.com/jrjarrett/aoc2021/internal/day6"
 	"log"
 	"os"
 	"strconv"
@@ -22,6 +23,7 @@ type App struct {
 	Scanner          day3.Scanner
 	Bingo            day4.Bingo
 	Vents            day5.Vents
+	Lanternfish      day6.Lanternfish
 }
 
 func New() *App {
@@ -38,8 +40,10 @@ func (a *App) Run() {
 	// a.Day3_2()
 	// a.Day4_1()
 	// a.Day4_2()
-	a.Day5_1()
-	a.Day5_2()
+	// a.Day5_1()
+	// a.Day5_2()
+	a.Day6_1()
+	a.Day6_2()
 
 }
 
@@ -149,6 +153,33 @@ func (a *App) Day5_2() {
 	result := a.Vents.CalculateAnswer(hotSpots)
 	fmt.Printf("Day 5 part 2 answer is %d\n", result)
 }
+
+func (a *App) Day6_1() {
+	a.Lanternfish.SetIntialSchoolFromFile("/Users/jarrett/src/dev/golang/aoc2021/testData/day6/day6.txt")
+	a.Lanternfish.SpawnDay1(80)
+	fmt.Printf("Day 80 school size is %d\n", len(a.Lanternfish.School))
+	// fmt.Printf("Day 1 school  is %v\n", a.Lanternfish.School)
+}
+
+func (a *App) Day6_1a() {
+	result := a.Lanternfish.ConvertInputToArray("/Users/jarrett/src/dev/golang/aoc2021/testData/day6/day6.txt")
+
+	a.Lanternfish.SetGradSchoolFromArray(result)
+
+	a.Lanternfish.SpawnDay2(80)
+	fmt.Printf("Day 1a - map method - day 80 school size is %d\n", a.Lanternfish.CountFish())
+
+}
+func (a *App) Day6_2() {
+	result := a.Lanternfish.ConvertInputToArray("/Users/jarrett/src/dev/golang/aoc2021/testData/day6/day6.txt")
+
+	a.Lanternfish.SetGradSchoolFromArray(result)
+
+	a.Lanternfish.SpawnDay2(256)
+	fmt.Printf("Day 2 256 school size is %d\n", a.Lanternfish.CountFish())
+}
+
+// ----------------------------- Helper functions ---------------------------------------------------------------------
 
 func getAOCSonarInput(fileName string) ([]int, error) {
 	var sonarInput []int
